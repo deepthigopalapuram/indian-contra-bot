@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Stock Contra Screener Dashboard</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: #334155;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .stat-card .label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .stat-card .value {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: 5px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        .symbol {
+            color: var(--accent);
+        }
+        .text-danger {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        .text-sl {
+            color: #b91c1c;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: #94a3b8;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .badge-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        .badge-fscore {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 NIFTY 50 & SENSEX Contra Screener</h1>
+            <p>Last Market Scan Updated: <strong>2026-09-21 15:20:33 UTC</strong></p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Watchlist</div>
+                <div class="value">51 Stocks</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Qualified Signals</div>
+                <div class="value" style="color: var(--success);">1 Qualified</div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: QUALIFIED BUY OPPORTUNITIES -->
+        <div class="card">
+            <div class="card-title">🚨 Qualified Contra Buy Opportunities</div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>CMP</th>
+                            <th>Drawdown</th>
+                            <th>RSI</th>
+                            <th>F-Score</th>
+                            <th>Targets (1 & 2)</th>
+                            <th>Stop Loss</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr>
+                <td><strong class="symbol">HCLTECH</strong></td>
+                <td>₹1281.0</td>
+                <td><span class="text-danger">-23.7%</span></td>
+                <td>35.31</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹1537.2 / ₹1729.35</td>
+                <td><span class="text-sl">₹1152.9</span></td>
+            </tr>
+            
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 2: FULL WATCHLIST -->
+        <div class="card">
+            <div class="card-title">📋 Full Screened Watchlist Metrics</div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>CMP</th>
+                            <th>Drawdown</th>
+                            <th>RSI</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+        <tr>
+            <td><strong>TMPV</strong></td>
+            <td>₹301.65</td>
+            <td>-57.7%</td>
+            <td>41.13</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TRENT</strong></td>
+            <td>₹2815.5</td>
+            <td>-43.7%</td>
+            <td>44.44</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>WIPRO</strong></td>
+            <td>₹164.55</td>
+            <td>-37.4%</td>
+            <td>17.97</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INFY</strong></td>
+            <td>₹1038.5</td>
+            <td>-37.2%</td>
+            <td>20.84</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ITC</strong></td>
+            <td>₹267.0</td>
+            <td>-33.6%</td>
+            <td>50.7</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TCS</strong></td>
+            <td>₹2128.7</td>
+            <td>-33.6%</td>
+            <td>19.23</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MARUTI</strong></td>
+            <td>₹12153.0</td>
+            <td>-29.0%</td>
+            <td>21.31</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HDFCLIFE</strong></td>
+            <td>₹559.4</td>
+            <td>-28.7%</td>
+            <td>56.84</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JIOFIN</strong></td>
+            <td>₹229.97</td>
+            <td>-26.8%</td>
+            <td>37.46</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HDFCBANK</strong></td>
+            <td>₹739.5</td>
+            <td>-25.5%</td>
+            <td>61.82</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HINDUNILVR</strong></td>
+            <td>₹1947.0</td>
+            <td>-23.9%</td>
+            <td>38.65</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HCLTECH</strong></td>
+            <td>₹1281.0</td>
+            <td>-23.7%</td>
+            <td>35.31</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ONGC</strong></td>
+            <td>₹235.63</td>
+            <td>-21.5%</td>
+            <td>50.32</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RELIANCE</strong></td>
+            <td>₹1247.4</td>
+            <td>-21.3%</td>
+            <td>31.67</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TATACONSUM</strong></td>
+            <td>₹1000.6</td>
+            <td>-20.6%</td>
+            <td>37.41</td>
+            <td><span class="badge badge-success">BUY CALL</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NTPC</strong></td>
+            <td>₹326.4</td>
+            <td>-19.6%</td>
+            <td>53.56</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>M&M</strong></td>
+            <td>₹3055.3</td>
+            <td>-18.8%</td>
+            <td>20.42</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SBIN</strong></td>
+            <td>₹996.0</td>
+            <td>-17.4%</td>
+            <td>34.95</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ASIANPAINT</strong></td>
+            <td>₹2440.3</td>
+            <td>-17.1%</td>
+            <td>27.38</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>POWERGRID</strong></td>
+            <td>₹266.1</td>
+            <td>-17.1%</td>
+            <td>52.45</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INDIGO</strong></td>
+            <td>₹4941.0</td>
+            <td>-16.7%</td>
+            <td>41.19</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SBILIFE</strong></td>
+            <td>₹1756.0</td>
+            <td>-16.6%</td>
+            <td>52.03</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CIPLA</strong></td>
+            <td>₹1386.1</td>
+            <td>-15.9%</td>
+            <td>38.77</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TATASTEEL</strong></td>
+            <td>₹183.4</td>
+            <td>-15.4%</td>
+            <td>48.87</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BAJAJFINSV</strong></td>
+            <td>₹1849.8</td>
+            <td>-14.9%</td>
+            <td>23.87</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BEL</strong></td>
+            <td>₹398.5</td>
+            <td>-14.8%</td>
+            <td>40.52</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BHARTIARTL</strong></td>
+            <td>₹1830.2</td>
+            <td>-14.3%</td>
+            <td>41.02</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HINDALCO</strong></td>
+            <td>₹981.2</td>
+            <td>-14.2%</td>
+            <td>37.54</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ULTRACEMCO</strong></td>
+            <td>₹11100.0</td>
+            <td>-13.2%</td>
+            <td>40.46</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>DRREDDY</strong></td>
+            <td>₹1198.3</td>
+            <td>-12.3%</td>
+            <td>59.23</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BAJFINANCE</strong></td>
+            <td>₹1021.3</td>
+            <td>-11.9%</td>
+            <td>38.03</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MAXHEALTH</strong></td>
+            <td>₹1066.6</td>
+            <td>-11.8%</td>
+            <td>74.65</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>COALINDIA</strong></td>
+            <td>₹414.7</td>
+            <td>-11.6%</td>
+            <td>63.26</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SHRIRAMFIN</strong></td>
+            <td>₹1011.8</td>
+            <td>-11.3%</td>
+            <td>31.93</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AXISBANK</strong></td>
+            <td>₹1250.0</td>
+            <td>-10.8%</td>
+            <td>46.96</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>LT</strong></td>
+            <td>₹3904.8</td>
+            <td>-10.8%</td>
+            <td>40.72</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INDUSINDBK</strong></td>
+            <td>₹956.0</td>
+            <td>-10.6%</td>
+            <td>37.78</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NESTLEIND</strong></td>
+            <td>₹1385.0</td>
+            <td>-10.1%</td>
+            <td>29.85</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TECHM</strong></td>
+            <td>₹1558.5</td>
+            <td>-9.6%</td>
+            <td>34.95</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ICICIBANK</strong></td>
+            <td>₹1345.0</td>
+            <td>-7.9%</td>
+            <td>16.21</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ADANIENT</strong></td>
+            <td>₹2975.0</td>
+            <td>-7.4%</td>
+            <td>59.74</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BAJAJ-AUTO</strong></td>
+            <td>₹11460.0</td>
+            <td>-7.3%</td>
+            <td>19.79</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>EICHERMOT</strong></td>
+            <td>₹7512.5</td>
+            <td>-7.3%</td>
+            <td>22.49</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>KOTAKBANK</strong></td>
+            <td>₹414.8</td>
+            <td>-6.7%</td>
+            <td>38.64</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SUNPHARMA</strong></td>
+            <td>₹1868.9</td>
+            <td>-6.6%</td>
+            <td>34.45</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GRASIM</strong></td>
+            <td>₹3166.0</td>
+            <td>-6.3%</td>
+            <td>29.81</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TITAN</strong></td>
+            <td>₹4875.0</td>
+            <td>-5.7%</td>
+            <td>34.06</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JSWSTEEL</strong></td>
+            <td>₹1268.6</td>
+            <td>-5.4%</td>
+            <td>38.84</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ETERNAL</strong></td>
+            <td>₹335.9</td>
+            <td>-5.2%</td>
+            <td>60.05</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ADANIPORTS</strong></td>
+            <td>₹1787.1</td>
+            <td>-5.1%</td>
+            <td>69.29</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>APOLLOHOSP</strong></td>
+            <td>₹8912.0</td>
+            <td>-1.4%</td>
+            <td>58.07</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

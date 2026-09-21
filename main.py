@@ -12,14 +12,21 @@ from supabase import create_client
 # ==========================================
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ==========================================
-# 2. DYNAMIC & DEDUPLICATED TICKER FETCH
+# 2. TICKER CLEANUP & DYNAMIC FETCH
 # ==========================================
+def clean_ticker_symbol(symbol):
+    """Ensures valid Yahoo Finance ticker mapping."""
+    ticker_map = {
+        "TATAMOTORS": "TATAMOTORS.NS",
+        "LTIM": "LTIM.NS",
+    }
+    clean_sym = symbol.strip().upper()
+    return ticker_map.get(clean_sym, f"{clean_sym}.NS")
+
 def get_nifty_and_sensex_tickers():
     """Dynamically fetches NIFTY 50 and SENSEX constituents, returning unique Yahoo Tickers."""
     symbols = set()
@@ -36,14 +43,14 @@ def get_nifty_and_sensex_tickers():
     # 2. Append Sensex constituents to ensure 100% overlap
     sensex_fallback = [
         "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "HINDUNILVR", 
-        "ITC", "SBIN", "BHARTIARTL", "LTIM", "KOTAKBANK", "LT", "AXISBANK", 
+        "ITC", "SBIN", "BHARTIARTL", "KOTAKBANK", "LT", "AXISBANK", 
         "ASIANPAINT", "MARUTI", "SUNPHARMA", "TITAN", "ULTRACEMCO", "BAJFINANCE", 
         "POWERGRID", "NTPC", "TATASTEEL", "JSWSTEEL", "M&M", "TECHM", "HCLTECH", 
         "TATAMOTORS", "INDUSINDBK", "NESTLEIND"
     ]
     symbols.update(sensex_fallback)
     
-    formatted_tickers = [f"{sym}.NS" for sym in symbols]
+    formatted_tickers = [clean_ticker_symbol(sym) for sym in symbols]
     print(f"✅ Target Watchlist: {len(formatted_tickers)} unique NIFTY 50 & SENSEX stocks.")
     return formatted_tickers
 
@@ -51,21 +58,32 @@ def get_nifty_and_sensex_tickers():
 # 3. TELEGRAM NOTIFICATION ENGINE
 # ==========================================
 def send_telegram_alert(message):
-    """Sends formatted Markdown alert to Telegram."""
-    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
+    """Sends formatted Markdown alert to Telegram with clean token handling."""
+    raw_token = os.getenv("TELEGRAM_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+    if not raw_token or not chat_id:
         print("⚠️ Telegram credentials missing. Skipping notification.")
         return
-        
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+
+    # Clean whitespace or extra quote characters injected by env setups
+    token = raw_token.strip().strip("'").strip('"')
+    chat_id = chat_id.strip().strip("'").strip('"')
+
+    masked_token = f"{token[:5]}...{token[-4:]}" if len(token) > 10 else "INVALID"
+    print(f"🔑 Sending Telegram dispatch using Token: {masked_token}")
+
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
+        "chat_id": chat_id,
         "text": message,
         "parse_mode": "Markdown"
     }
+
     try:
         res = requests.post(url, json=payload, timeout=10)
         if res.status_code == 200:
-            print("📱 Telegram summary alert dispatched successfully!")
+            print("📱 Telegram alert dispatched successfully!")
         else:
             print(f"❌ Telegram Error ({res.status_code}): {res.text}")
     except Exception as e:
@@ -220,7 +238,7 @@ def run_optimized_scanner():
     alert_lines.append(f"🔍 *Total Stocks Screened:* `{len(all_processed_stocks)}`")
     alert_lines.append(f"🎯 *Opportunities Found:* `{len(final_qualified)}` \n")
 
-    # SECTION 1: QUALIFIED BUY OPPORTUNITIES (IF ANY)
+    # SECTION 1: QUALIFIED BUY OPPORTUNITIES
     if final_qualified:
         alert_lines.append("🚨 *QUALIFIED CONTRA BUY CANDIDATES:*")
         for q in final_qualified:
@@ -233,7 +251,7 @@ def run_optimized_scanner():
     # SECTION 2: SUMMARY LIST OF ALL SCREENED STOCKS
     alert_lines.append("📋 *FULL SCREENED WATCHLIST METRICS:*")
     
-    # Sort stocks by drawdown descending so the most discounted stocks are on top
+    # Sort stocks by drawdown descending so the most discounted stocks are at the top
     all_processed_stocks.sort(key=lambda x: x["drawdown"], reverse=True)
 
     for item in all_processed_stocks:
@@ -242,10 +260,9 @@ def run_optimized_scanner():
             f"{status_tag} `{item['clean_symbol']:<10}` | CMP: ₹{item['cmp']:<7} | DD: -{item['drawdown']}% | RSI: {item['rsi']}"
         )
 
-    # Join and dispatch Telegram message
+    # Join and dispatch Telegram message with character chunking
     full_message = "\n".join(alert_lines)
     
-    # Handle Telegram 4096 character length limit by chunking if necessary
     if len(full_message) > 4000:
         chunks = [full_message[i:i+3900] for i in range(0, len(full_message), 3900)]
         for chunk in chunks:

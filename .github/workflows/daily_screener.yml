@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install yfinance supabase requests pandas
+          pip install --upgrade yfinance supabase requests pandas
 
       - name: Run Contra Bot
         env:

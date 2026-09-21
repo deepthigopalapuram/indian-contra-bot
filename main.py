@@ -5,6 +5,13 @@ import requests
 import yfinance as yf
 from supabase import create_client
 
+# Try importing nselib for direct NSE data retrieval
+try:
+    from nselib import capital_market
+    USE_NSELIB = True
+except ImportError:
+    USE_NSELIB = False
+
 # ==========================================
 # 1. ENVIRONMENT VARIABLES & CONNECTIONS
 # ==========================================
@@ -15,18 +22,19 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Indian Stock Watchlist (NSE Tickers)
-NSE_WATCHLIST = [
-    "TATAMOTORS.NS", "TATASTEEL.NS", "ZEEL.NS", "UPL.NS", "BIOCON.NS", 
-    "EXIDEIND.NS", "BANDHANBNK.NS", "IPCALAB.NS", "WHIRLPOOL.NS", 
-    "CROMPTON.NS", "LAURUSLABS.NS", "HEROMOTOCO.NS", "RELIANCE.NS", "INFY.NS"
+# Stock Symbols (Clean NSE Symbols)
+NSE_SYMBOLS = [
+    "TATAMOTORS", "TATASTEEL", "ZEEL", "UPL", "BIOCON", 
+    "EXIDEIND", "BANDHANBNK", "IPCALAB", "WHIRLPOOL", 
+    "CROMPTON", "LAURUSLABS", "HEROMOTOCO", "RELIANCE", "INFY"
 ]
 
-# Set standard browser user-agent for yfinance requests
-session = requests.Session()
-session.headers.update({
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-})
+# Standard Headers for direct NSE HTTP requests
+NSE_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "*/*",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 # ==========================================
 # 2. TELEGRAM NOTIFICATION ENGINE
@@ -53,38 +61,66 @@ def send_telegram_alert(message):
         print(f"❌ Failed to send Telegram message: {e}")
 
 # ==========================================
-# 3. FUNDAMENTAL SAFETY FILTER (Piotroski Score)
+# 3. DIRECT NSE / FALLBACK DATA FETCHERS
 # ==========================================
+def get_historical_data_nse(symbol):
+    """
+    Primary: Fetches historical data directly via nselib or Yahoo Finance fallback.
+    """
+    # 1. Try Direct Yahoo Ticker History
+    try:
+        yf_symbol = f"{symbol}.NS"
+        stock_obj = yf.Ticker(yf_symbol)
+        df = stock_obj.history(period="1y")
+        if not df.empty and len(df) >= 100:
+            return df, stock_obj
+    except Exception as e:
+        print(f"⚠️ Yahoo Finance failed for {symbol}: {e}")
+
+    # 2. Fallback: Direct NSE Lib if Yahoo is blocked
+    if USE_NSELIB:
+        try:
+            # Fetch last 365 days from NSE
+            data = capital_market.price_volume_and_deliverable_position_data(symbol=symbol, period='1Y')
+            if not data.empty:
+                df = data[['ClosePrice', 'HighPrice', 'LowPrice']].copy()
+                df.rename(columns={'ClosePrice': 'Close', 'HighPrice': 'High', 'LowPrice': 'Low'}, inplace=True)
+                df['Close'] = pd.to_numeric(df['Close'].str.replace(',', ''), errors='coerce')
+                df = df.dropna()
+                return df, None
+        except Exception as e:
+            print(f"⚠️ NSE Direct fetch failed for {symbol}: {e}")
+
+    return None, None
+
 def calculate_piotroski_f_score(ticker_obj):
-    """Calculates Piotroski F-Score (0-9) to filter out value traps."""
+    """Calculates Piotroski F-Score safely with fallbacks."""
+    if ticker_obj is None:
+        return 5  # Return neutral score if fundamentals engine is bypassed
+
     try:
         bs = ticker_obj.balance_sheet
         is_ = ticker_obj.financials
         cf = ticker_obj.cashflow
         
         score = 0
-        if bs.empty or is_.empty or cf.empty:
-            return 5  # Neutral score if data is incomplete
+        if bs is None or is_ is None or cf is None or bs.empty or is_.empty or cf.empty:
+            return 5
 
-        # 1. Positive Net Income
         net_income = is_.loc['Net Income'].iloc[0] if 'Net Income' in is_.index else 0
         if net_income > 0: score += 1
             
-        # 2. Positive Operating Cash Flow
         ocf = cf.loc['Operating Cash Flow'].iloc[0] if 'Operating Cash Flow' in cf.index else 0
         if ocf > 0: score += 1
             
-        # 3. Quality of Earnings (OCF > Net Income)
         if ocf > net_income: score += 1
             
-        # 4. Long-Term Debt Reduction
         if 'Long Term Debt' in bs.index and len(bs.loc['Long Term Debt']) > 1:
             if bs.loc['Long Term Debt'].iloc[0] <= bs.loc['Long Term Debt'].iloc[1]:
                 score += 1
         else:
             score += 1
 
-        # 5. Higher Current Ratio
         if 'Current Assets' in bs.index and 'Current Liabilities' in bs.index:
             cr_curr = bs.loc['Current Assets'].iloc[0] / bs.loc['Current Liabilities'].iloc[0]
             cr_prev = bs.loc['Current Assets'].iloc[1] / bs.loc['Current Liabilities'].iloc[1]
@@ -92,26 +128,24 @@ def calculate_piotroski_f_score(ticker_obj):
 
         return score
     except Exception:
-        return 5
+        return 5  # Fallback score if Yahoo blocks quoteSummary
 
 # ==========================================
-# 4. ROBUST STOCK SCANNER
+# 4. MAIN SCANNING ENGINE
 # ==========================================
 def run_high_volume_contra_scanner():
-    print("🚀 Starting Scan for Indian Equities...")
+    print("🚀 Starting Hybrid NSE/Yahoo Contra Scan for Indian Equities...")
     qualified_stocks = []
 
-    for symbol in NSE_WATCHLIST:
+    for symbol in NSE_SYMBOLS:
         try:
-            # Fetch data per ticker using explicit session
-            stock_obj = yf.Ticker(symbol, session=session)
-            df = stock_obj.history(period="1y")
+            df, stock_obj = get_historical_data_nse(symbol)
 
-            if df.empty or len(df) < 100:
-                print(f"⚠️ No data retrieved for {symbol}")
+            if df is None or df.empty or len(df) < 100:
+                print(f"❌ Could not retrieve valid data for {symbol} from any provider.")
                 continue
 
-            # Indicators
+            # Compute Technical Indicators
             df["SMA_200"] = df["Close"].rolling(window=200).mean()
             
             # 14-Day RSI
@@ -126,19 +160,20 @@ def run_high_volume_contra_scanner():
             drawdown = ((high_52w - cmp) / high_52w) * 100
             latest_rsi = round(float(df["RSI"].iloc[-1]), 2) if not pd.isna(df["RSI"].iloc[-1]) else 50.0
 
+            print(f"📊 Processed {symbol} | CMP: ₹{cmp} | Drawdown: -{round(drawdown, 1)}% | RSI: {latest_rsi}")
+
             # CONTRA FILTER: Drop >= 20% from 52W High AND RSI <= 45
             if drawdown >= 20.0 and latest_rsi <= 45.0:
                 f_score = calculate_piotroski_f_score(stock_obj)
 
                 if f_score >= 5:
-                    clean_symbol = symbol.replace(".NS", "")
                     target_1 = round(cmp * 1.20, 2)
                     target_2 = round(cmp * 1.35, 2)
                     stop_loss = round(cmp * 0.90, 2)
 
-                    # Insert into Supabase
+                    # Save record to Supabase
                     db_entry = {
-                        "ticker": clean_symbol,
+                        "ticker": symbol,
                         "entry_price": cmp,
                         "target_1": target_1,
                         "target_2": target_2,
@@ -147,10 +182,10 @@ def run_high_volume_contra_scanner():
                     }
                     supabase.table("contra_portfolio").insert(db_entry).execute()
 
-                    # Send Telegram Notification
+                    # Send Telegram Alert
                     alert_msg = (
                         f"🚨 *NEW CONTRA OPPORTUNITY DETECTED*\n\n"
-                        f"📈 *Stock:* `{clean_symbol}`\n"
+                        f"📈 *Stock:* `{symbol}`\n"
                         f"💵 *CMP:* ₹{cmp}\n"
                         f"📉 *52W Drawdown:* -{round(drawdown, 1)}%\n"
                         f"📊 *Piotroski Score:* {f_score}/9\n\n"
@@ -160,8 +195,8 @@ def run_high_volume_contra_scanner():
                     )
                     
                     send_telegram_alert(alert_msg)
-                    qualified_stocks.append(clean_symbol)
-                    print(f"✅ QUALIFIED & LOGGED: {clean_symbol}")
+                    qualified_stocks.append(symbol)
+                    print(f"✅ QUALIFIED & LOGGED: {symbol}")
 
         except Exception as e:
             print(f"❌ Error processing {symbol}: {e}")
@@ -170,7 +205,7 @@ def run_high_volume_contra_scanner():
         print("ℹ️ Scan completed. No new contra candidates met the criteria today.")
 
 # ==========================================
-# 5. EXECUTION
+# 5. EXECUTION ENTRY POINT
 # ==========================================
 if __name__ == "__main__":
     run_high_volume_contra_scanner()

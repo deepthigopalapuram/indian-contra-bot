@@ -13,15 +13,20 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# Initialize Supabase Client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Watchlist of Indian Equities (NSE Tickers)
+# Indian Stock Watchlist (NSE Tickers)
 NSE_WATCHLIST = [
     "TATAMOTORS.NS", "TATASTEEL.NS", "ZEEL.NS", "UPL.NS", "BIOCON.NS", 
     "EXIDEIND.NS", "BANDHANBNK.NS", "IPCALAB.NS", "WHIRLPOOL.NS", 
     "CROMPTON.NS", "LAURUSLABS.NS", "HEROMOTOCO.NS", "RELIANCE.NS", "INFY.NS"
 ]
+
+# Set standard browser user-agent for yfinance requests
+session = requests.Session()
+session.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+})
 
 # ==========================================
 # 2. TELEGRAM NOTIFICATION ENGINE
@@ -51,10 +56,7 @@ def send_telegram_alert(message):
 # 3. FUNDAMENTAL SAFETY FILTER (Piotroski Score)
 # ==========================================
 def calculate_piotroski_f_score(ticker_obj):
-    """
-    Calculates Piotroski F-Score (0-9) to filter out value traps.
-    Ensures company has operational strength despite stock price drops.
-    """
+    """Calculates Piotroski F-Score (0-9) to filter out value traps."""
     try:
         bs = ticker_obj.balance_sheet
         is_ = ticker_obj.financials
@@ -62,110 +64,79 @@ def calculate_piotroski_f_score(ticker_obj):
         
         score = 0
         if bs.empty or is_.empty or cf.empty:
-            return 5  # Return neutral score if data is incomplete
+            return 5  # Neutral score if data is incomplete
 
         # 1. Positive Net Income
         net_income = is_.loc['Net Income'].iloc[0] if 'Net Income' in is_.index else 0
-        if net_income > 0: 
-            score += 1
+        if net_income > 0: score += 1
             
         # 2. Positive Operating Cash Flow
         ocf = cf.loc['Operating Cash Flow'].iloc[0] if 'Operating Cash Flow' in cf.index else 0
-        if ocf > 0: 
-            score += 1
+        if ocf > 0: score += 1
             
-        # 3. Quality of Earnings (Operating Cash Flow > Net Income)
-        if ocf > net_income: 
-            score += 1
+        # 3. Quality of Earnings (OCF > Net Income)
+        if ocf > net_income: score += 1
             
         # 4. Long-Term Debt Reduction
         if 'Long Term Debt' in bs.index and len(bs.loc['Long Term Debt']) > 1:
             if bs.loc['Long Term Debt'].iloc[0] <= bs.loc['Long Term Debt'].iloc[1]:
                 score += 1
         else:
-            score += 1  # Default point if debt is negligible
+            score += 1
 
-        # 5. Higher Current Ratio (Liquidity)
+        # 5. Higher Current Ratio
         if 'Current Assets' in bs.index and 'Current Liabilities' in bs.index:
             cr_curr = bs.loc['Current Assets'].iloc[0] / bs.loc['Current Liabilities'].iloc[0]
             cr_prev = bs.loc['Current Assets'].iloc[1] / bs.loc['Current Liabilities'].iloc[1]
-            if cr_curr > cr_prev: 
-                score += 1
+            if cr_curr > cr_prev: score += 1
 
         return score
     except Exception:
-        return 5  # Default neutral score if parsing fails
+        return 5
 
 # ==========================================
-# 4. HIGH-SPEED SCANNER & VECTORIZED CALCULATIONS
+# 4. ROBUST STOCK SCANNER
 # ==========================================
 def run_high_volume_contra_scanner():
-    print("🚀 Starting High-Speed Batch Scan for Indian Equities...")
-
-    try:
-        # STEP 1: BATCH INGESTION (Downloads all ticker data simultaneously)
-        batch_data = yf.download(
-            tickers=NSE_WATCHLIST, 
-            period="1y", 
-            group_by="ticker", 
-            threads=True, 
-            progress=False,
-            auto_adjust=True,
-            ignore_tz=True
-        )
-    except Exception as e:
-        print(f"❌ Error fetching batch market data: {e}")
-        return
-
+    print("🚀 Starting Scan for Indian Equities...")
     qualified_stocks = []
 
-    # STEP 2: VECTORIZED CALCULATIONS PER STOCK
     for symbol in NSE_WATCHLIST:
         try:
-            # Safely extract individual DataFrame from batch result
-            if isinstance(batch_data.columns, pd.MultiIndex):
-                if symbol not in batch_data.columns.levels[0]:
-                    print(f"⚠️ Skipping {symbol}: No data returned from Yahoo Finance.")
-                    continue
-                df = batch_data[symbol].dropna()
-            else:
-                df = batch_data.dropna()
+            # Fetch data per ticker using explicit session
+            stock_obj = yf.Ticker(symbol, session=session)
+            df = stock_obj.history(period="1y")
 
             if df.empty or len(df) < 100:
+                print(f"⚠️ No data retrieved for {symbol}")
                 continue
 
-            # Vectorized 200-Day Simple Moving Average
+            # Indicators
             df["SMA_200"] = df["Close"].rolling(window=200).mean()
             
-            # Vectorized 14-Day RSI
+            # 14-Day RSI
             delta = df["Close"].diff()
             gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
             loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
             rs = gain / loss
             df["RSI"] = 100 - (100 / (1 + rs))
 
-            # Current Real-Time Metrics
-            cmp = round(df["Close"].iloc[-1], 2)
-            high_52w = df["Close"].max()
+            cmp = round(float(df["Close"].iloc[-1]), 2)
+            high_52w = float(df["Close"].max())
             drawdown = ((high_52w - cmp) / high_52w) * 100
-            latest_rsi = round(df["RSI"].iloc[-1], 2) if not pd.isna(df["RSI"].iloc[-1]) else 50.0
+            latest_rsi = round(float(df["RSI"].iloc[-1]), 2) if not pd.isna(df["RSI"].iloc[-1]) else 50.0
 
-            # CONTRA CRITERIA:
-            # Price dropped >= 20% from 52-week high AND RSI <= 45 (Consolidation/Oversold)
+            # CONTRA FILTER: Drop >= 20% from 52W High AND RSI <= 45
             if drawdown >= 20.0 and latest_rsi <= 45.0:
-                
-                # Fetch balance sheet data only for candidates passing technical filters
-                stock_obj = yf.Ticker(symbol)
                 f_score = calculate_piotroski_f_score(stock_obj)
 
-                # Require Piotroski Score >= 5 to filter out value traps
                 if f_score >= 5:
                     clean_symbol = symbol.replace(".NS", "")
-                    target_1 = round(cmp * 1.20, 2)   # Target 1: +20% gain (Book 50%)
-                    target_2 = round(cmp * 1.35, 2)   # Target 2: +35% gain (Exit All)
-                    stop_loss = round(cmp * 0.90, 2)  # Stop Loss: -10%
+                    target_1 = round(cmp * 1.20, 2)
+                    target_2 = round(cmp * 1.35, 2)
+                    stop_loss = round(cmp * 0.90, 2)
 
-                    # 1. Save candidate record into Supabase Database
+                    # Insert into Supabase
                     db_entry = {
                         "ticker": clean_symbol,
                         "entry_price": cmp,
@@ -176,7 +147,7 @@ def run_high_volume_contra_scanner():
                     }
                     supabase.table("contra_portfolio").insert(db_entry).execute()
 
-                    # 2. Construct and Dispatch Telegram Alert
+                    # Send Telegram Notification
                     alert_msg = (
                         f"🚨 *NEW CONTRA OPPORTUNITY DETECTED*\n\n"
                         f"📈 *Stock:* `{clean_symbol}`\n"
@@ -199,7 +170,7 @@ def run_high_volume_contra_scanner():
         print("ℹ️ Scan completed. No new contra candidates met the criteria today.")
 
 # ==========================================
-# 5. SCRIPT EXECUTION ENTRY POINT
+# 5. EXECUTION
 # ==========================================
 if __name__ == "__main__":
     run_high_volume_contra_scanner()

@@ -13,9 +13,10 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
+# Initialize Supabase Client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Expanded Indian Stock Watchlist (NSE Tickers)
+# Watchlist of Indian Equities (NSE Tickers)
 NSE_WATCHLIST = [
     "TATAMOTORS.NS", "TATASTEEL.NS", "ZEEL.NS", "UPL.NS", "BIOCON.NS", 
     "EXIDEIND.NS", "BANDHANBNK.NS", "IPCALAB.NS", "WHIRLPOOL.NS", 
@@ -23,12 +24,12 @@ NSE_WATCHLIST = [
 ]
 
 # ==========================================
-# 2. TELEGRAM NOTIFICATION FUNCTION
+# 2. TELEGRAM NOTIFICATION ENGINE
 # ==========================================
 def send_telegram_alert(message):
-    """Sends formatted alert messages to your Telegram Group/Chat."""
+    """Sends a formatted Markdown alert to your Telegram chat/group."""
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-        print("Telegram configuration missing. Skipping notification.")
+        print("⚠️ Telegram environment variables missing. Skipping alert dispatch.")
         return
         
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -38,19 +39,22 @@ def send_telegram_alert(message):
         "parse_mode": "Markdown"
     }
     try:
-        response = requests.post(url, json=payload)
+        response = requests.post(url, json=payload, timeout=10)
         if response.status_code == 200:
-            print("Telegram alert sent successfully!")
+            print("📱 Telegram alert sent successfully!")
         else:
-            print(f"Telegram API Error: {response.text}")
+            print(f"❌ Telegram API Error ({response.status_code}): {response.text}")
     except Exception as e:
-        print(f"Failed to send Telegram message: {e}")
+        print(f"❌ Failed to send Telegram message: {e}")
 
 # ==========================================
-# 3. FUNDAMENTAL FILTER (Piotroski Score)
+# 3. FUNDAMENTAL SAFETY FILTER (Piotroski Score)
 # ==========================================
 def calculate_piotroski_f_score(ticker_obj):
-    """Calculates Piotroski F-Score (0-9) to filter out value traps."""
+    """
+    Calculates Piotroski F-Score (0-9) to filter out value traps.
+    Ensures company has operational strength despite stock price drops.
+    """
     try:
         bs = ticker_obj.balance_sheet
         is_ = ticker_obj.financials
@@ -58,35 +62,39 @@ def calculate_piotroski_f_score(ticker_obj):
         
         score = 0
         if bs.empty or is_.empty or cf.empty:
-            return 5 # Return neutral score if data is incomplete
+            return 5  # Return neutral score if data is incomplete
 
         # 1. Positive Net Income
         net_income = is_.loc['Net Income'].iloc[0] if 'Net Income' in is_.index else 0
-        if net_income > 0: score += 1
+        if net_income > 0: 
+            score += 1
             
         # 2. Positive Operating Cash Flow
         ocf = cf.loc['Operating Cash Flow'].iloc[0] if 'Operating Cash Flow' in cf.index else 0
-        if ocf > 0: score += 1
+        if ocf > 0: 
+            score += 1
             
-        # 3. Quality of Earnings (OCF > Net Income)
-        if ocf > net_income: score += 1
+        # 3. Quality of Earnings (Operating Cash Flow > Net Income)
+        if ocf > net_income: 
+            score += 1
             
-        # 4. Debt Reduction
+        # 4. Long-Term Debt Reduction
         if 'Long Term Debt' in bs.index and len(bs.loc['Long Term Debt']) > 1:
             if bs.loc['Long Term Debt'].iloc[0] <= bs.loc['Long Term Debt'].iloc[1]:
                 score += 1
         else:
-            score += 1
+            score += 1  # Default point if debt is negligible
 
-        # 5. Higher Current Ratio
+        # 5. Higher Current Ratio (Liquidity)
         if 'Current Assets' in bs.index and 'Current Liabilities' in bs.index:
             cr_curr = bs.loc['Current Assets'].iloc[0] / bs.loc['Current Liabilities'].iloc[0]
             cr_prev = bs.loc['Current Assets'].iloc[1] / bs.loc['Current Liabilities'].iloc[1]
-            if cr_curr > cr_prev: score += 1
+            if cr_curr > cr_prev: 
+                score += 1
 
         return score
     except Exception:
-        return 5 # Default neutral score
+        return 5  # Default neutral score if parsing fails
 
 # ==========================================
 # 4. HIGH-SPEED SCANNER & VECTORIZED CALCULATIONS
@@ -94,22 +102,31 @@ def calculate_piotroski_f_score(ticker_obj):
 def run_high_volume_contra_scanner():
     print("🚀 Starting High-Speed Batch Scan for Indian Equities...")
 
-    # STEP 1: BATCH INGESTION (Download all stock data in ONE API CALL)
-    batch_data = yf.download(
-        tickers=NSE_WATCHLIST, 
-        period="1y", 
-        group_by="ticker", 
-        threads=True, 
-        progress=False
-    )
-    
+    try:
+        # STEP 1: BATCH INGESTION (Downloads all ticker data simultaneously)
+        batch_data = yf.download(
+            tickers=NSE_WATCHLIST, 
+            period="1y", 
+            group_by="ticker", 
+            threads=True, 
+            progress=False,
+            auto_adjust=True,
+            ignore_tz=True
+        )
+    except Exception as e:
+        print(f"❌ Error fetching batch market data: {e}")
+        return
+
     qualified_stocks = []
 
     # STEP 2: VECTORIZED CALCULATIONS PER STOCK
     for symbol in NSE_WATCHLIST:
         try:
-            # Extract DataFrame for individual stock
-            if len(NSE_WATCHLIST) > 1:
+            # Safely extract individual DataFrame from batch result
+            if isinstance(batch_data.columns, pd.MultiIndex):
+                if symbol not in batch_data.columns.levels[0]:
+                    print(f"⚠️ Skipping {symbol}: No data returned from Yahoo Finance.")
+                    continue
                 df = batch_data[symbol].dropna()
             else:
                 df = batch_data.dropna()
@@ -117,10 +134,10 @@ def run_high_volume_contra_scanner():
             if df.empty or len(df) < 100:
                 continue
 
-            # Vectorized Indicators
+            # Vectorized 200-Day Simple Moving Average
             df["SMA_200"] = df["Close"].rolling(window=200).mean()
             
-            # Vectorized RSI (14-day)
+            # Vectorized 14-Day RSI
             delta = df["Close"].diff()
             gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
             loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
@@ -133,22 +150,22 @@ def run_high_volume_contra_scanner():
             drawdown = ((high_52w - cmp) / high_52w) * 100
             latest_rsi = round(df["RSI"].iloc[-1], 2) if not pd.isna(df["RSI"].iloc[-1]) else 50.0
 
-            # CONTRA FILTER CONDITION:
-            # Stock dropped >= 20% from 52-week high AND RSI <= 45 (Oversold/Consolidation)
+            # CONTRA CRITERIA:
+            # Price dropped >= 20% from 52-week high AND RSI <= 45 (Consolidation/Oversold)
             if drawdown >= 20.0 and latest_rsi <= 45.0:
                 
-                # Fundamental Check (Individual call only for qualified candidates)
+                # Fetch balance sheet data only for candidates passing technical filters
                 stock_obj = yf.Ticker(symbol)
                 f_score = calculate_piotroski_f_score(stock_obj)
 
-                # Avoid Value Traps (Require Piotroski Score >= 5)
+                # Require Piotroski Score >= 5 to filter out value traps
                 if f_score >= 5:
                     clean_symbol = symbol.replace(".NS", "")
-                    target_1 = round(cmp * 1.20, 2)  # Target 1: +20% gain
-                    target_2 = round(cmp * 1.35, 2)  # Target 2: +35% gain
-                    stop_loss = round(cmp * 0.90, 2) # Stop Loss: -10%
+                    target_1 = round(cmp * 1.20, 2)   # Target 1: +20% gain (Book 50%)
+                    target_2 = round(cmp * 1.35, 2)   # Target 2: +35% gain (Exit All)
+                    stop_loss = round(cmp * 0.90, 2)  # Stop Loss: -10%
 
-                    # Log candidate into Supabase DB
+                    # 1. Save candidate record into Supabase Database
                     db_entry = {
                         "ticker": clean_symbol,
                         "entry_price": cmp,
@@ -159,7 +176,7 @@ def run_high_volume_contra_scanner():
                     }
                     supabase.table("contra_portfolio").insert(db_entry).execute()
 
-                    # Format Telegram Alert
+                    # 2. Construct and Dispatch Telegram Alert
                     alert_msg = (
                         f"🚨 *NEW CONTRA OPPORTUNITY DETECTED*\n\n"
                         f"📈 *Stock:* `{clean_symbol}`\n"
@@ -173,16 +190,16 @@ def run_high_volume_contra_scanner():
                     
                     send_telegram_alert(alert_msg)
                     qualified_stocks.append(clean_symbol)
-                    print(f"✅ QUALIFIED & SENT TO TELEGRAM: {clean_symbol}")
+                    print(f"✅ QUALIFIED & LOGGED: {clean_symbol}")
 
         except Exception as e:
-            print(f"Error processing {symbol}: {e}")
+            print(f"❌ Error processing {symbol}: {e}")
 
     if not qualified_stocks:
         print("ℹ️ Scan completed. No new contra candidates met the criteria today.")
 
 # ==========================================
-# 5. EXECUTION ENTRY POINT
+# 5. SCRIPT EXECUTION ENTRY POINT
 # ==========================================
 if __name__ == "__main__":
     run_high_volume_contra_scanner()

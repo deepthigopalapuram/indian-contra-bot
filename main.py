@@ -13,52 +13,45 @@ from supabase import create_client
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
 
 # ==========================================
-# 2. TICKER CLEANUP & DYNAMIC FETCH
+# 2. FETCH ENTIRE NSE & BSE TICKER UNIVERSE
 # ==========================================
-def clean_ticker_symbol(symbol):
-    """Ensures valid Yahoo Finance ticker mapping."""
-    ticker_map = {
-        "TATAMOTORS": "TATAMOTORS.NS",
-        "LTIM": "LTIM.NS",
-    }
-    clean_sym = symbol.strip().upper()
-    return ticker_map.get(clean_sym, f"{clean_sym}.NS")
-
-def get_nifty_and_sensex_tickers():
-    """Dynamically fetches NIFTY 50 and SENSEX constituents, returning unique Yahoo Tickers."""
-    symbols = set()
+def get_full_indian_market_universe():
+    """Fetches all equity tickers listed on NSE dynamically."""
+    nse_symbols = set()
     
-    # 1. Fetch official NIFTY 50 list
+    # 1. Fetch Official All NSE Listed Equity Master List
     try:
-        url = "https://archives.nseindia.com/content/indices/ind_nifty50list.csv"
-        df = pd.read_csv(url)
-        symbols.update(df['Symbol'].tolist())
+        nse_url = "https://archives.nseindia.com/content/EQUITY_L.csv"
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        df_nse = pd.read_csv(nse_url, storage_options=headers)
+        
+        # Filter active EQ series
+        df_eq = df_nse[df_nse[' SERIES'].str.strip() == 'EQ'] if ' SERIES' in df_nse.columns else df_nse
+        for sym in df_eq['SYMBOL'].dropna().unique():
+            nse_symbols.add(f"{sym.strip().upper()}.NS")
+        print(f"✅ Downloaded {len(nse_symbols)} active NSE equities.")
     except Exception as e:
-        print(f"⚠️ Could not pull NIFTY 50 CSV ({e}). Using fallback list.")
-        symbols.update(["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "TATAMOTORS"])
+        print(f"⚠️ Could not pull complete NSE CSV ({e}). Using NIFTY 500 fallback.")
+        try:
+            fallback_url = "https://archives.nseindia.com/content/indices/ind_nifty500list.csv"
+            df_f = pd.read_csv(fallback_url)
+            for sym in df_f['Symbol'].dropna().unique():
+                nse_symbols.add(f"{sym.strip().upper()}.NS")
+        except Exception:
+            pass
 
-    # 2. Append Sensex constituents to ensure 100% overlap
-    sensex_fallback = [
-        "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "HINDUNILVR", 
-        "ITC", "SBIN", "BHARTIARTL", "KOTAKBANK", "LT", "AXISBANK", 
-        "ASIANPAINT", "MARUTI", "SUNPHARMA", "TITAN", "ULTRACEMCO", "BAJFINANCE", 
-        "POWERGRID", "NTPC", "TATASTEEL", "JSWSTEEL", "M&M", "TECHM", "HCLTECH", 
-        "TATAMOTORS", "INDUSINDBK", "NESTLEIND"
-    ]
-    symbols.update(sensex_fallback)
-    
-    formatted_tickers = [clean_ticker_symbol(sym) for sym in symbols]
-    print(f"✅ Target Watchlist: {len(formatted_tickers)} unique NIFTY 50 & SENSEX stocks.")
-    return formatted_tickers
+    tickers = list(nse_symbols)
+    print(f"🌐 Total Market Universe: {len(tickers)} stocks queued for analysis.")
+    return tickers
 
 # ==========================================
-# 3. WEBPAGE DASHBOARD GENERATOR (MONEYCONTROL STYLE)
+# 3. WEBPAGE DASHBOARD GENERATOR
 # ==========================================
 def generate_html_dashboard(all_stocks, qualified_stocks):
-    """Generates a modern, responsive HTML dashboard for GitHub Pages."""
+    """Generates an HTML report for GitHub Pages."""
     updated_time = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     
     # Sort qualified stocks by Piotroski score (descending)
@@ -88,9 +81,10 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
         </tr>
         """
 
+    # Display Top 200 discounted stocks in the summary table
     watchlist_rows = ""
-    for s in all_stocks:
-        status_badge = '<span class="badge badge-success">BUY CALL</span>' if s['is_qualified'] else '<span class="badge badge-secondary">WATCH</span>'
+    for s in all_stocks[:200]:
+        status_badge = '<span class="badge badge-success">BUY CANDIDATE</span>' if s['is_qualified'] else '<span class="badge badge-secondary">WATCH</span>'
         watchlist_rows += f"""
         <tr>
             <td><strong>{s['clean_symbol']}</strong></td>
@@ -106,7 +100,7 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indian Stock Contra Screener Dashboard</title>
+    <title>All-India Stock Contra Screener</title>
     <style>
         :root {{
             --primary: #1e293b;
@@ -118,32 +112,19 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
             --border: #e2e8f0;
         }}
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: #334155;
             margin: 0;
             padding: 20px;
         }}
-        .container {{
-            max-width: 1100px;
-            margin: 0 auto;
-        }}
+        .container {{ max-width: 1100px; margin: 0 auto; }}
         .header {{
             background: var(--primary);
             color: white;
             padding: 20px 25px;
             border-radius: 10px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }}
-        .header h1 {{
-            margin: 0 0 5px 0;
-            font-size: 24px;
-        }}
-        .header p {{
-            margin: 0;
-            font-size: 13px;
-            color: #94a3b8;
         }}
         .stats-grid {{
             display: grid;
@@ -157,100 +138,39 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
             border-radius: 8px;
             border: 1px solid var(--border);
         }}
-        .stat-card .label {{
-            font-size: 12px;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 600;
-        }}
-        .stat-card .value {{
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--primary);
-            margin-top: 5px;
-        }}
+        .stat-card .label {{ font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }}
+        .stat-card .value {{ font-size: 22px; font-weight: bold; color: var(--primary); margin-top: 5px; }}
         .card {{
             background: var(--card-bg);
             border-radius: 10px;
             border: 1px solid var(--border);
             padding: 20px;
             margin-bottom: 25px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }}
-        .card-title {{
-            font-size: 18px;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }}
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }}
-        th, td {{
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }}
-        th {{
-            background-color: #f1f5f9;
-            color: #475569;
-            font-weight: 600;
-        }}
-        tr:hover {{
-            background-color: #f8fafc;
-        }}
-        .symbol {{
-            color: var(--accent);
-        }}
-        .text-danger {{
-            color: var(--danger);
-            font-weight: 600;
-        }}
-        .text-sl {{
-            color: #b91c1c;
-        }}
-        .text-center {{
-            text-align: center;
-        }}
-        .text-muted {{
-            color: #94a3b8;
-        }}
-        .badge {{
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-        }}
-        .badge-success {{
-            background: #dcfce7;
-            color: #15803d;
-        }}
-        .badge-secondary {{
-            background: #f1f5f9;
-            color: #64748b;
-        }}
-        .badge-fscore {{
-            background: #dbeafe;
-            color: #1d4ed8;
-        }}
+        .card-title {{ font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--primary); }}
+        table {{ width: 100%; border-collapse: collapse; font-size: 14px; }}
+        th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }}
+        th {{ background-color: #f1f5f9; color: #475569; font-weight: 600; }}
+        tr:hover {{ background-color: #f8fafc; }}
+        .symbol {{ color: var(--accent); }}
+        .text-danger {{ color: var(--danger); font-weight: 600; }}
+        .text-sl {{ color: #b91c1c; }}
+        .badge {{ padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }}
+        .badge-success {{ background: #dcfce7; color: #15803d; }}
+        .badge-secondary {{ background: #f1f5f9; color: #64748b; }}
+        .badge-fscore {{ background: #dbeafe; color: #1d4ed8; }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 NIFTY 50 & SENSEX Contra Screener</h1>
-            <p>Last Market Scan Updated: <strong>{updated_time}</strong></p>
+            <h1>📊 All-India Stock Market Contra Screener</h1>
+            <p>Last Full Market Scan Updated: <strong>{updated_time}</strong></p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="label">Total Watchlist</div>
+                <div class="label">Total Stocks Scanned</div>
                 <div class="value">{len(all_stocks)} Stocks</div>
             </div>
             <div class="stat-card">
@@ -261,7 +181,7 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
 
         <!-- SECTION 1: QUALIFIED BUY OPPORTUNITIES -->
         <div class="card">
-            <div class="card-title">🚨 Qualified Contra Buy Opportunities</div>
+            <div class="card-title">🚨 Qualified Contra Opportunities (All Market)</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -275,16 +195,14 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
                             <th>Stop Loss</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {qualified_rows}
-                    </tbody>
+                    <tbody>{qualified_rows}</tbody>
                 </table>
             </div>
         </div>
 
-        <!-- SECTION 2: FULL WATCHLIST -->
+        <!-- SECTION 2: TOP DISCOUNTED WATCHLIST -->
         <div class="card">
-            <div class="card-title">📋 Full Screened Watchlist Metrics</div>
+            <div class="card-title">📋 Top 200 Discounted Stocks (Watchlist Metrics)</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -296,9 +214,7 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {watchlist_rows}
-                    </tbody>
+                    <tbody>{watchlist_rows}</tbody>
                 </table>
             </div>
         </div>
@@ -316,7 +232,7 @@ def generate_html_dashboard(all_stocks, qualified_stocks):
 # 4. FAST PIOTROSKI SCORE EVALUATOR
 # ==========================================
 def get_piotroski_score_safe(symbol):
-    """Fetches fundamental data concurrently only for technical qualifiers."""
+    """Executes fundamentals check ONLY on technically pre-filtered candidates."""
     try:
         stock = yf.Ticker(symbol)
         bs = stock.balance_sheet
@@ -350,80 +266,86 @@ def get_piotroski_score_safe(symbol):
         return 5
 
 # ==========================================
-# 5. HIGH-PERFORMANCE VECTORIZED SCANNER
+# 5. CHUNKED BATCH SCANNER ENGINE
 # ==========================================
 def run_optimized_scanner():
     start_time = time.time()
-    tickers = get_nifty_and_sensex_tickers()
+    tickers = get_full_indian_market_universe()
     
-    print("🚀 Downloading batch price history for all stocks in ONE request...")
-    batch_data = yf.download(
-        tickers=tickers, 
-        period="1y", 
-        group_by="ticker", 
-        threads=True, 
-        progress=False,
-        auto_adjust=True,
-        ignore_tz=True
-    )
+    # Chunk universe into batches of 250 tickers to prevent payload limits
+    chunk_size = 250
+    ticker_chunks = [tickers[i:i + chunk_size] for i in range(0, len(tickers), chunk_size)]
     
-    download_time = round(time.time() - start_time, 2)
-    print(f"⚡ Batch download finished in {download_time}s.")
-
     all_processed_stocks = []
     technical_qualifiers = []
 
-    # Fast in-memory processing loop
-    for symbol in tickers:
+    print(f"🚀 Processing {len(tickers)} stocks across {len(ticker_chunks)} parallelized batch downloads...")
+
+    for idx, chunk in enumerate(ticker_chunks, 1):
         try:
-            if isinstance(batch_data.columns, pd.MultiIndex):
-                if symbol not in batch_data.columns.levels[0]:
+            print(f"📥 Batch {idx}/{len(ticker_chunks)}: Downloading {len(chunk)} tickers...")
+            batch_data = yf.download(
+                tickers=chunk, 
+                period="1y", 
+                group_by="ticker", 
+                threads=True, 
+                progress=False,
+                auto_adjust=True,
+                ignore_tz=True
+            )
+
+            for symbol in chunk:
+                try:
+                    if isinstance(batch_data.columns, pd.MultiIndex):
+                        if symbol not in batch_data.columns.levels[0]:
+                            continue
+                        df = batch_data[symbol].dropna()
+                    else:
+                        df = batch_data.dropna()
+
+                    if df.empty or len(df) < 50:
+                        continue
+
+                    # Fast RSI Calculation
+                    delta = df["Close"].diff()
+                    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                    rs = gain / loss
+                    df["RSI"] = 100 - (100 / (1 + rs))
+
+                    cmp = round(float(df["Close"].iloc[-1]), 2)
+                    high_52w = float(df["Close"].max())
+                    drawdown = round(((high_52w - cmp) / high_52w) * 100, 1)
+                    latest_rsi = round(float(df["RSI"].iloc[-1]), 2) if not pd.isna(df["RSI"].iloc[-1]) else 50.0
+
+                    clean_symbol = symbol.replace(".NS", "")
+                    
+                    stock_record = {
+                        "symbol": symbol,
+                        "clean_symbol": clean_symbol,
+                        "cmp": cmp,
+                        "drawdown": drawdown,
+                        "rsi": latest_rsi,
+                        "is_qualified": False
+                    }
+
+                    # CONTRA FILTER: Drawdown >= 20% & RSI <= 45
+                    if drawdown >= 20.0 and latest_rsi <= 45.0:
+                        stock_record["is_qualified"] = True
+                        technical_qualifiers.append(stock_record)
+
+                    all_processed_stocks.append(stock_record)
+
+                except Exception:
                     continue
-                df = batch_data[symbol].dropna()
-            else:
-                df = batch_data.dropna()
-
-            if df.empty or len(df) < 100:
-                continue
-
-            # Vectorized RSI Calculation
-            delta = df["Close"].diff()
-            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-            rs = gain / loss
-            df["RSI"] = 100 - (100 / (1 + rs))
-
-            cmp = round(float(df["Close"].iloc[-1]), 2)
-            high_52w = float(df["Close"].max())
-            drawdown = round(((high_52w - cmp) / high_52w) * 100, 1)
-            latest_rsi = round(float(df["RSI"].iloc[-1]), 2) if not pd.isna(df["RSI"].iloc[-1]) else 50.0
-
-            clean_symbol = symbol.replace(".NS", "")
-            
-            # Record for full summary
-            stock_record = {
-                "symbol": symbol,
-                "clean_symbol": clean_symbol,
-                "cmp": cmp,
-                "drawdown": drawdown,
-                "rsi": latest_rsi,
-                "is_qualified": False
-            }
-
-            # CONTRA FILTER CONDITION: Drawdown >= 20% & RSI <= 45
-            if drawdown >= 20.0 and latest_rsi <= 45.0:
-                stock_record["is_qualified"] = True
-                technical_qualifiers.append(stock_record)
-
-            all_processed_stocks.append(stock_record)
 
         except Exception as e:
-            print(f"❌ Error computing metrics for {symbol}: {e}")
+            print(f"❌ Batch {idx} failed: {e}")
 
-    # Process qualified candidates using ThreadPoolExecutor for fast fundamental checks
+    # Process qualified candidates fundamentals using parallel ThreadPool
     final_qualified = []
     if technical_qualifiers:
-        print(f"\n🔍 {len(technical_qualifiers)} candidates met technical criteria. Checking Piotroski scores...")
+        print(f"\n🔍 {len(technical_qualifiers)} candidates passed technical filters out of full market. Evaluating Piotroski scores...")
         
         def process_candidate(candidate):
             f_score = get_piotroski_score_safe(candidate["symbol"])
@@ -433,16 +355,19 @@ def run_optimized_scanner():
                 target_2 = round(cmp * 1.35, 2)
                 stop_loss = round(cmp * 0.90, 2)
 
-                # Supabase Log
-                db_entry = {
-                    "ticker": candidate["clean_symbol"],
-                    "entry_price": cmp,
-                    "target_1": target_1,
-                    "target_2": target_2,
-                    "stop_loss": stop_loss,
-                    "status": "HOLDING"
-                }
-                supabase.table("contra_portfolio").insert(db_entry).execute()
+                if supabase:
+                    try:
+                        db_entry = {
+                            "ticker": candidate["clean_symbol"],
+                            "entry_price": cmp,
+                            "target_1": target_1,
+                            "target_2": target_2,
+                            "stop_loss": stop_loss,
+                            "status": "HOLDING"
+                        }
+                        supabase.table("contra_portfolio").insert(db_entry).execute()
+                    except Exception as db_e:
+                        print(f"Database error logging {candidate['clean_symbol']}: {db_e}")
                 
                 candidate["f_score"] = f_score
                 candidate["target_1"] = target_1
@@ -454,11 +379,11 @@ def run_optimized_scanner():
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
             executor.map(process_candidate, technical_qualifiers)
 
-    # Generate HTML Output for GitHub Pages
+    # Generate Dashboard Output
     generate_html_dashboard(all_processed_stocks, final_qualified)
 
     total_time = round(time.time() - start_time, 2)
-    print(f"\n✨ Scan completed in {total_time} seconds across all NIFTY & SENSEX stocks.")
+    print(f"\n✨ Full market scan completed in {total_time} seconds across {len(all_processed_stocks)} stocks.")
 
 # ==========================================
 # 6. EXECUTION ENTRY POINT

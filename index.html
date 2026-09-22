@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indian Stock Contra Screener Dashboard</title>
+    <title>All-India Stock Contra Screener</title>
     <style>
         :root {
             --primary: #1e293b;
@@ -15,32 +15,19 @@
             --border: #e2e8f0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: #334155;
             margin: 0;
             padding: 20px;
         }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1100px; margin: 0 auto; }
         .header {
             background: var(--primary);
             color: white;
             padding: 20px 25px;
             border-radius: 10px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .header h1 {
-            margin: 0 0 5px 0;
-            font-size: 24px;
-        }
-        .header p {
-            margin: 0;
-            font-size: 13px;
-            color: #94a3b8;
         }
         .stats-grid {
             display: grid;
@@ -54,111 +41,50 @@
             border-radius: 8px;
             border: 1px solid var(--border);
         }
-        .stat-card .label {
-            font-size: 12px;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .stat-card .value {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--primary);
-            margin-top: 5px;
-        }
+        .stat-card .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
+        .stat-card .value { font-size: 22px; font-weight: bold; color: var(--primary); margin-top: 5px; }
         .card {
             background: var(--card-bg);
             border-radius: 10px;
             border: 1px solid var(--border);
             padding: 20px;
             margin-bottom: 25px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        th {
-            background-color: #f1f5f9;
-            color: #475569;
-            font-weight: 600;
-        }
-        tr:hover {
-            background-color: #f8fafc;
-        }
-        .symbol {
-            color: var(--accent);
-        }
-        .text-danger {
-            color: var(--danger);
-            font-weight: 600;
-        }
-        .text-sl {
-            color: #b91c1c;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .text-muted {
-            color: #94a3b8;
-        }
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .badge-success {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        .badge-secondary {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        .badge-fscore {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
+        .card-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--primary); }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background-color: #f1f5f9; color: #475569; font-weight: 600; }
+        tr:hover { background-color: #f8fafc; }
+        .symbol { color: var(--accent); }
+        .text-danger { color: var(--danger); font-weight: 600; }
+        .text-sl { color: #b91c1c; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .badge-success { background: #dcfce7; color: #15803d; }
+        .badge-secondary { background: #f1f5f9; color: #64748b; }
+        .badge-fscore { background: #dbeafe; color: #1d4ed8; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 NIFTY 50 & SENSEX Contra Screener</h1>
-            <p>Last Market Scan Updated: <strong>2026-09-22 05:53:09 UTC</strong></p>
+            <h1>📊 All-India Stock Market Contra Screener</h1>
+            <p>Last Full Market Scan Updated: <strong>2026-09-22 07:58:33 UTC</strong></p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="label">Total Watchlist</div>
-                <div class="value">51 Stocks</div>
+                <div class="label">Total Stocks Scanned</div>
+                <div class="value">500 Stocks</div>
             </div>
             <div class="stat-card">
                 <div class="label">Qualified Signals</div>
-                <div class="value" style="color: var(--success);">1 Qualified</div>
+                <div class="value" style="color: var(--success);">13 Qualified</div>
             </div>
         </div>
 
         <!-- SECTION 1: QUALIFIED BUY OPPORTUNITIES -->
         <div class="card">
-            <div class="card-title">🚨 Qualified Contra Buy Opportunities</div>
+            <div class="card-title">🚨 Qualified Contra Opportunities (All Market)</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -173,25 +99,143 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
             <tr>
                 <td><strong class="symbol">HCLTECH</strong></td>
-                <td>₹1272.9</td>
-                <td><span class="text-danger">-24.2%</span></td>
-                <td>33.05</td>
+                <td>₹1264.5</td>
+                <td><span class="text-danger">-24.7%</span></td>
+                <td>30.52</td>
                 <td><span class="badge badge-fscore">5/9</span></td>
-                <td>₹1527.48 / ₹1718.42</td>
-                <td><span class="text-sl">₹1145.61</span></td>
+                <td>₹1517.4 / ₹1707.08</td>
+                <td><span class="text-sl">₹1138.05</span></td>
             </tr>
             
-                    </tbody>
+            <tr>
+                <td><strong class="symbol">LTTS</strong></td>
+                <td>₹3277.5</td>
+                <td><span class="text-danger">-29.4%</span></td>
+                <td>16.5</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹3933.0 / ₹4424.62</td>
+                <td><span class="text-sl">₹2949.75</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">HINDCOPPER</strong></td>
+                <td>₹510.9</td>
+                <td><span class="text-danger">-32.4%</span></td>
+                <td>44.54</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹613.08 / ₹689.72</td>
+                <td><span class="text-sl">₹459.81</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">BBTC</strong></td>
+                <td>₹1462.0</td>
+                <td><span class="text-danger">-29.8%</span></td>
+                <td>44.44</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹1754.4 / ₹1973.7</td>
+                <td><span class="text-sl">₹1315.8</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">BLS</strong></td>
+                <td>₹228.36</td>
+                <td><span class="text-danger">-36.2%</span></td>
+                <td>31.84</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹274.03 / ₹308.29</td>
+                <td><span class="text-sl">₹205.52</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">MRF</strong></td>
+                <td>₹125050.0</td>
+                <td><span class="text-danger">-22.8%</span></td>
+                <td>12.2</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹150060.0 / ₹168817.5</td>
+                <td><span class="text-sl">₹112545.0</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">JPPOWER</strong></td>
+                <td>₹16.12</td>
+                <td><span class="text-danger">-29.5%</span></td>
+                <td>43.64</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹19.34 / ₹21.76</td>
+                <td><span class="text-sl">₹14.51</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">FORCEMOT</strong></td>
+                <td>₹17301.0</td>
+                <td><span class="text-danger">-32.7%</span></td>
+                <td>44.67</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹20761.2 / ₹23356.35</td>
+                <td><span class="text-sl">₹15570.9</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">HYUNDAI</strong></td>
+                <td>₹2106.8</td>
+                <td><span class="text-danger">-22.8%</span></td>
+                <td>40.68</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹2528.16 / ₹2844.18</td>
+                <td><span class="text-sl">₹1896.12</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">AMBER</strong></td>
+                <td>₹7025.0</td>
+                <td><span class="text-danger">-20.6%</span></td>
+                <td>28.83</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹8430.0 / ₹9483.75</td>
+                <td><span class="text-sl">₹6322.5</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">TIINDIA</strong></td>
+                <td>₹2573.5</td>
+                <td><span class="text-danger">-23.1%</span></td>
+                <td>28.91</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹3088.2 / ₹3474.23</td>
+                <td><span class="text-sl">₹2316.15</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">VEDL</strong></td>
+                <td>₹262.05</td>
+                <td><span class="text-danger">-66.7%</span></td>
+                <td>37.38</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹314.46 / ₹353.77</td>
+                <td><span class="text-sl">₹235.85</span></td>
+            </tr>
+            
+            <tr>
+                <td><strong class="symbol">MSUMI</strong></td>
+                <td>₹35.25</td>
+                <td><span class="text-danger">-31.3%</span></td>
+                <td>33.74</td>
+                <td><span class="badge badge-fscore">5/9</span></td>
+                <td>₹42.3 / ₹47.59</td>
+                <td><span class="text-sl">₹31.73</span></td>
+            </tr>
+            </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- SECTION 2: FULL WATCHLIST -->
+        <!-- SECTION 2: TOP DISCOUNTED WATCHLIST -->
         <div class="card">
-            <div class="card-title">📋 Full Screened Watchlist Metrics</div>
+            <div class="card-title">📋 Top 200 Discounted Stocks (Watchlist Metrics)</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -204,416 +248,1606 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
+        <tr>
+            <td><strong>HEG</strong></td>
+            <td>₹237.05</td>
+            <td>-67.9%</td>
+            <td>8.32</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>VEDL</strong></td>
+            <td>₹262.05</td>
+            <td>-66.7%</td>
+            <td>37.38</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>KPITTECH</strong></td>
+            <td>₹530.0</td>
+            <td>-57.8%</td>
+            <td>17.64</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
         <tr>
             <td><strong>TMPV</strong></td>
-            <td>₹300.25</td>
-            <td>-57.9%</td>
-            <td>39.94</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
+            <td>₹300.4</td>
+            <td>-57.8%</td>
+            <td>40.06</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
         </tr>
         
         <tr>
-            <td><strong>TRENT</strong></td>
-            <td>₹2790.4</td>
-            <td>-44.2%</td>
-            <td>41.5</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
+            <td><strong>RPOWER</strong></td>
+            <td>₹20.88</td>
+            <td>-57.2%</td>
+            <td>25.18</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
         </tr>
         
         <tr>
-            <td><strong>INFY</strong></td>
-            <td>₹1024.9</td>
-            <td>-38.0%</td>
-            <td>19.53</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
+            <td><strong>KEC</strong></td>
+            <td>₹393.85</td>
+            <td>-54.9%</td>
+            <td>37.27</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
         </tr>
         
         <tr>
-            <td><strong>WIPRO</strong></td>
-            <td>₹164.03</td>
-            <td>-37.6%</td>
-            <td>17.63</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>TCS</strong></td>
-            <td>₹2108.4</td>
-            <td>-34.2%</td>
-            <td>14.8</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>ITC</strong></td>
-            <td>₹266.6</td>
-            <td>-33.7%</td>
-            <td>50.0</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>MARUTI</strong></td>
-            <td>₹12197.0</td>
-            <td>-28.8%</td>
-            <td>23.73</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>HDFCLIFE</strong></td>
-            <td>₹566.0</td>
-            <td>-27.9%</td>
-            <td>58.79</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>JIOFIN</strong></td>
-            <td>₹230.98</td>
-            <td>-26.5%</td>
-            <td>40.04</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>HDFCBANK</strong></td>
-            <td>₹744.65</td>
-            <td>-25.0%</td>
-            <td>63.43</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>HCLTECH</strong></td>
-            <td>₹1272.9</td>
-            <td>-24.2%</td>
-            <td>33.05</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>HINDUNILVR</strong></td>
-            <td>₹1942.6</td>
-            <td>-24.0%</td>
-            <td>37.34</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>ONGC</strong></td>
-            <td>₹234.49</td>
-            <td>-21.9%</td>
-            <td>48.22</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>RELIANCE</strong></td>
-            <td>₹1247.6</td>
-            <td>-21.3%</td>
-            <td>31.75</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>TATACONSUM</strong></td>
-            <td>₹993.2</td>
-            <td>-21.2%</td>
-            <td>34.05</td>
-            <td><span class="badge badge-success">BUY CALL</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>NTPC</strong></td>
-            <td>₹327.2</td>
-            <td>-19.4%</td>
-            <td>54.64</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>M&M</strong></td>
-            <td>₹3064.2</td>
-            <td>-18.6%</td>
-            <td>22.42</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>SBIN</strong></td>
-            <td>₹988.4</td>
-            <td>-18.0%</td>
-            <td>32.99</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>CIPLA</strong></td>
-            <td>₹1367.9</td>
-            <td>-17.0%</td>
-            <td>34.9</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>POWERGRID</strong></td>
-            <td>₹267.0</td>
-            <td>-16.8%</td>
-            <td>53.98</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>ASIANPAINT</strong></td>
-            <td>₹2458.6</td>
-            <td>-16.5%</td>
-            <td>30.19</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>SBILIFE</strong></td>
-            <td>₹1760.5</td>
-            <td>-16.4%</td>
-            <td>52.54</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>INDIGO</strong></td>
-            <td>₹4968.0</td>
-            <td>-16.3%</td>
-            <td>43.61</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>BAJAJFINSV</strong></td>
-            <td>₹1841.0</td>
-            <td>-15.3%</td>
-            <td>23.0</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>TATASTEEL</strong></td>
-            <td>₹183.65</td>
-            <td>-15.2%</td>
+            <td><strong>FIRSTCRY</strong></td>
+            <td>₹177.1</td>
+            <td>-54.4%</td>
             <td>49.29</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>HINDALCO</strong></td>
-            <td>₹973.2</td>
-            <td>-14.9%</td>
-            <td>35.41</td>
+            <td><strong>KAYNES</strong></td>
+            <td>₹3490.2</td>
+            <td>-54.0%</td>
+            <td>41.55</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MAPMYINDIA</strong></td>
+            <td>₹917.1</td>
+            <td>-52.8%</td>
+            <td>25.05</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INOXWIND</strong></td>
+            <td>₹77.63</td>
+            <td>-50.6%</td>
+            <td>75.45</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>BEL</strong></td>
-            <td>₹398.0</td>
-            <td>-14.9%</td>
-            <td>40.08</td>
+            <td><strong>JAINREC</strong></td>
+            <td>₹282.7</td>
+            <td>-50.5%</td>
+            <td>51.8</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>BHARTIARTL</strong></td>
-            <td>₹1830.1</td>
-            <td>-14.3%</td>
-            <td>41.01</td>
+            <td><strong>LATENTVIEW</strong></td>
+            <td>₹250.05</td>
+            <td>-50.2%</td>
+            <td>19.18</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NEWGEN</strong></td>
+            <td>₹493.3</td>
+            <td>-49.9%</td>
+            <td>21.78</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>COHANCE</strong></td>
+            <td>₹455.65</td>
+            <td>-49.6%</td>
+            <td>47.45</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>ULTRACEMCO</strong></td>
-            <td>₹11075.0</td>
-            <td>-13.4%</td>
-            <td>39.5</td>
+            <td><strong>WHIRLPOOL</strong></td>
+            <td>₹721.5</td>
+            <td>-48.9%</td>
+            <td>16.83</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TARIL</strong></td>
+            <td>₹280.8</td>
+            <td>-47.6%</td>
+            <td>13.98</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ABFRL</strong></td>
+            <td>₹49.57</td>
+            <td>-47.0%</td>
+            <td>42.34</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BATAINDIA</strong></td>
+            <td>₹635.0</td>
+            <td>-45.8%</td>
+            <td>20.41</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RVNL</strong></td>
+            <td>₹210.13</td>
+            <td>-45.5%</td>
+            <td>51.95</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>MAXHEALTH</strong></td>
-            <td>₹1063.5</td>
-            <td>-12.0%</td>
-            <td>74.03</td>
+            <td><strong>INTELLECT</strong></td>
+            <td>₹650.0</td>
+            <td>-45.2%</td>
+            <td>24.04</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ABLBL</strong></td>
+            <td>₹80.67</td>
+            <td>-45.2%</td>
+            <td>29.31</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ZENSARTECH</strong></td>
+            <td>₹433.1</td>
+            <td>-45.1%</td>
+            <td>29.96</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TRENT</strong></td>
+            <td>₹2765.6</td>
+            <td>-44.7%</td>
+            <td>38.96</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TATAELXSI</strong></td>
+            <td>₹3209.3</td>
+            <td>-44.2%</td>
+            <td>14.99</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AFCONS</strong></td>
+            <td>₹258.35</td>
+            <td>-44.1%</td>
+            <td>33.52</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SYNGENE</strong></td>
+            <td>₹376.0</td>
+            <td>-43.2%</td>
+            <td>22.32</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GODFRYPHLP</strong></td>
+            <td>₹1973.6</td>
+            <td>-42.7%</td>
+            <td>35.53</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JKTYRE</strong></td>
+            <td>₹347.15</td>
+            <td>-42.0%</td>
+            <td>19.48</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GALLANTT</strong></td>
+            <td>₹549.5</td>
+            <td>-40.7%</td>
+            <td>41.88</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IRFC</strong></td>
+            <td>₹79.91</td>
+            <td>-39.6%</td>
+            <td>36.44</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IRCON</strong></td>
+            <td>₹109.0</td>
+            <td>-39.4%</td>
+            <td>20.23</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TTML</strong></td>
+            <td>₹35.58</td>
+            <td>-39.4%</td>
+            <td>27.12</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BSOFT</strong></td>
+            <td>₹281.25</td>
+            <td>-38.7%</td>
+            <td>32.94</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INFY</strong></td>
+            <td>₹1025.5</td>
+            <td>-38.0%</td>
+            <td>19.58</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>LEMONTREE</strong></td>
+            <td>₹107.68</td>
+            <td>-37.8%</td>
+            <td>55.32</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>BAJFINANCE</strong></td>
-            <td>₹1021.0</td>
-            <td>-11.9%</td>
-            <td>37.95</td>
+            <td><strong>SWANCORP</strong></td>
+            <td>₹305.1</td>
+            <td>-37.6%</td>
+            <td>63.51</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>SHRIRAMFIN</strong></td>
-            <td>₹1007.5</td>
-            <td>-11.7%</td>
-            <td>30.4</td>
+            <td><strong>SWIGGY</strong></td>
+            <td>₹281.1</td>
+            <td>-37.5%</td>
+            <td>55.69</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>AXISBANK</strong></td>
-            <td>₹1244.4</td>
-            <td>-11.2%</td>
-            <td>45.04</td>
+            <td><strong>WIPRO</strong></td>
+            <td>₹164.58</td>
+            <td>-37.4%</td>
+            <td>17.99</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>PIIND</strong></td>
+            <td>₹2394.5</td>
+            <td>-37.0%</td>
+            <td>49.69</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>DRREDDY</strong></td>
-            <td>₹1216.2</td>
-            <td>-11.0%</td>
-            <td>63.63</td>
+            <td><strong>BLS</strong></td>
+            <td>₹228.36</td>
+            <td>-36.2%</td>
+            <td>31.84</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>EIDPARRY</strong></td>
+            <td>₹697.5</td>
+            <td>-36.0%</td>
+            <td>7.38</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ABREL</strong></td>
+            <td>₹1212.5</td>
+            <td>-35.9%</td>
+            <td>26.84</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NCC</strong></td>
+            <td>₹135.3</td>
+            <td>-35.8%</td>
+            <td>32.39</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ACC</strong></td>
+            <td>₹1238.2</td>
+            <td>-34.9%</td>
+            <td>37.6</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HEXT</strong></td>
+            <td>₹506.7</td>
+            <td>-34.9%</td>
+            <td>28.49</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TATAINVEST</strong></td>
+            <td>₹686.55</td>
+            <td>-34.8%</td>
+            <td>60.99</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>LT</strong></td>
-            <td>₹3900.0</td>
-            <td>-10.9%</td>
-            <td>40.01</td>
+            <td><strong>IRCTC</strong></td>
+            <td>₹471.0</td>
+            <td>-34.7%</td>
+            <td>42.02</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>OLAELEC</strong></td>
+            <td>₹38.1</td>
+            <td>-34.6%</td>
+            <td>39.02</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>LTM</strong></td>
+            <td>₹4137.3</td>
+            <td>-34.6%</td>
+            <td>15.9</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AMBUJACEM</strong></td>
+            <td>₹386.9</td>
+            <td>-34.3%</td>
+            <td>28.39</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JWL</strong></td>
+            <td>₹228.47</td>
+            <td>-34.3%</td>
+            <td>27.85</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TCS</strong></td>
+            <td>₹2110.8</td>
+            <td>-34.1%</td>
+            <td>15.35</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GODIGIT</strong></td>
+            <td>₹241.3</td>
+            <td>-34.0%</td>
+            <td>30.61</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ITC</strong></td>
+            <td>₹265.85</td>
+            <td>-33.9%</td>
+            <td>48.64</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>NESTLEIND</strong></td>
-            <td>₹1374.4</td>
-            <td>-10.8%</td>
-            <td>23.72</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>TECHM</strong></td>
-            <td>₹1539.0</td>
-            <td>-10.7%</td>
-            <td>29.76</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>INDUSINDBK</strong></td>
-            <td>₹956.2</td>
-            <td>-10.6%</td>
-            <td>37.83</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>COALINDIA</strong></td>
-            <td>₹428.25</td>
-            <td>-8.8%</td>
-            <td>69.34</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>ICICIBANK</strong></td>
-            <td>₹1339.2</td>
-            <td>-8.3%</td>
-            <td>12.52</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>BAJAJ-AUTO</strong></td>
-            <td>₹11367.0</td>
-            <td>-8.0%</td>
-            <td>16.69</td>
-            <td><span class="badge badge-secondary">WATCH</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>SUNPHARMA</strong></td>
-            <td>₹1851.5</td>
-            <td>-7.5%</td>
+            <td><strong>UBL</strong></td>
+            <td>₹1211.1</td>
+            <td>-33.7%</td>
             <td>27.97</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>PATANJALI</strong></td>
+            <td>₹399.3</td>
+            <td>-33.6%</td>
+            <td>78.52</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>EICHERMOT</strong></td>
-            <td>₹7507.0</td>
-            <td>-7.4%</td>
-            <td>22.34</td>
+            <td><strong>SIGNATURE</strong></td>
+            <td>₹762.85</td>
+            <td>-33.5%</td>
+            <td>47.0</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>GRASIM</strong></td>
-            <td>₹3136.5</td>
-            <td>-7.2%</td>
-            <td>27.46</td>
+            <td><strong>ZEEL</strong></td>
+            <td>₹78.17</td>
+            <td>-33.3%</td>
+            <td>18.57</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AWL</strong></td>
+            <td>₹184.2</td>
+            <td>-33.3%</td>
+            <td>27.09</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RAILTEL</strong></td>
+            <td>₹262.8</td>
+            <td>-33.2%</td>
+            <td>31.45</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NATCOPHARM</strong></td>
+            <td>₹806.7</td>
+            <td>-33.0%</td>
+            <td>23.57</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ITCHOTELS</strong></td>
+            <td>₹159.22</td>
+            <td>-33.0%</td>
+            <td>44.53</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INDIAMART</strong></td>
+            <td>₹1631.9</td>
+            <td>-33.0%</td>
+            <td>30.55</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NBCC</strong></td>
+            <td>₹81.7</td>
+            <td>-32.9%</td>
+            <td>33.8</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>FORCEMOT</strong></td>
+            <td>₹17301.0</td>
+            <td>-32.7%</td>
+            <td>44.67</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ELECON</strong></td>
+            <td>₹416.75</td>
+            <td>-32.5%</td>
+            <td>52.96</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>KOTAKBANK</strong></td>
-            <td>₹414.1</td>
-            <td>-6.8%</td>
+            <td><strong>SBICARD</strong></td>
+            <td>₹631.45</td>
+            <td>-32.4%</td>
+            <td>49.7</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HINDCOPPER</strong></td>
+            <td>₹510.9</td>
+            <td>-32.4%</td>
+            <td>44.54</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>VMM</strong></td>
+            <td>₹102.17</td>
+            <td>-32.2%</td>
+            <td>34.31</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IGL</strong></td>
+            <td>₹146.45</td>
+            <td>-32.2%</td>
+            <td>43.11</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>THERMAX</strong></td>
+            <td>₹3503.5</td>
+            <td>-31.8%</td>
+            <td>15.58</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>EMAMILTD</strong></td>
+            <td>₹390.15</td>
+            <td>-31.7%</td>
+            <td>58.33</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>UTIAMC</strong></td>
+            <td>₹925.35</td>
+            <td>-31.3%</td>
+            <td>70.46</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SJVN</strong></td>
+            <td>₹63.09</td>
+            <td>-31.3%</td>
+            <td>40.63</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MSUMI</strong></td>
+            <td>₹35.25</td>
+            <td>-31.3%</td>
+            <td>33.74</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>WAAREEENER</strong></td>
+            <td>₹2514.0</td>
+            <td>-30.6%</td>
+            <td>43.02</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HAVELLS</strong></td>
+            <td>₹1093.2</td>
+            <td>-30.3%</td>
+            <td>22.35</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>UPL</strong></td>
+            <td>₹556.0</td>
+            <td>-30.3%</td>
+            <td>45.13</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MUTHOOTFIN</strong></td>
+            <td>₹2831.5</td>
+            <td>-30.2%</td>
+            <td>36.54</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IREDA</strong></td>
+            <td>₹110.25</td>
+            <td>-29.9%</td>
+            <td>41.95</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BBTC</strong></td>
+            <td>₹1462.0</td>
+            <td>-29.8%</td>
+            <td>44.44</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TATACHEM</strong></td>
+            <td>₹673.6</td>
+            <td>-29.8%</td>
+            <td>55.98</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HBLENGINE</strong></td>
+            <td>₹769.8</td>
+            <td>-29.7%</td>
+            <td>83.33</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JPPOWER</strong></td>
+            <td>₹16.12</td>
+            <td>-29.5%</td>
+            <td>43.64</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>LTTS</strong></td>
+            <td>₹3277.5</td>
+            <td>-29.4%</td>
+            <td>16.5</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GODREJCP</strong></td>
+            <td>₹873.6</td>
+            <td>-29.3%</td>
+            <td>33.61</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TECHNOE</strong></td>
+            <td>₹1004.85</td>
+            <td>-29.1%</td>
+            <td>59.29</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GILLETTE</strong></td>
+            <td>₹7001.5</td>
+            <td>-29.0%</td>
+            <td>28.48</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TORNTPOWER</strong></td>
+            <td>₹1255.5</td>
+            <td>-28.9%</td>
+            <td>58.89</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MARUTI</strong></td>
+            <td>₹12178.0</td>
+            <td>-28.9%</td>
+            <td>22.7</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ITI</strong></td>
+            <td>₹254.05</td>
+            <td>-28.8%</td>
+            <td>22.43</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ICICIPRULI</strong></td>
+            <td>₹489.25</td>
+            <td>-28.7%</td>
+            <td>46.93</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>INDIACEM</strong></td>
+            <td>₹341.5</td>
+            <td>-28.6%</td>
+            <td>34.92</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HDFCLIFE</strong></td>
+            <td>₹561.6</td>
+            <td>-28.5%</td>
+            <td>57.51</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>VOLTAS</strong></td>
+            <td>₹1112.8</td>
+            <td>-28.5%</td>
+            <td>26.74</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IDBI</strong></td>
+            <td>₹83.04</td>
+            <td>-28.4%</td>
+            <td>23.59</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>UCOBANK</strong></td>
+            <td>₹23.65</td>
+            <td>-28.4%</td>
+            <td>30.58</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SUZLON</strong></td>
+            <td>₹42.98</td>
+            <td>-28.4%</td>
+            <td>25.0</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BLUEDART</strong></td>
+            <td>₹4792.0</td>
+            <td>-28.4%</td>
+            <td>38.53</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>DIXON</strong></td>
+            <td>₹13029.0</td>
+            <td>-28.4%</td>
+            <td>13.87</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ESCORTS</strong></td>
+            <td>₹2790.4</td>
+            <td>-28.4%</td>
+            <td>19.72</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BIKAJI</strong></td>
+            <td>₹555.2</td>
+            <td>-28.1%</td>
+            <td>33.24</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BDL</strong></td>
+            <td>₹1170.8</td>
+            <td>-27.8%</td>
+            <td>32.01</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NLCINDIA</strong></td>
+            <td>₹267.65</td>
+            <td>-27.8%</td>
+            <td>42.05</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>COCHINSHIP</strong></td>
+            <td>₹1384.5</td>
+            <td>-27.7%</td>
+            <td>39.72</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CHOLAHLDNG</strong></td>
+            <td>₹1459.9</td>
+            <td>-27.5%</td>
+            <td>42.46</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RAMCOCEM</strong></td>
+            <td>₹874.0</td>
+            <td>-27.3%</td>
+            <td>46.88</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JMFINANCIL</strong></td>
+            <td>₹126.53</td>
+            <td>-27.1%</td>
+            <td>46.87</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HUDCO</strong></td>
+            <td>₹172.5</td>
+            <td>-27.0%</td>
+            <td>37.27</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CROMPTON</strong></td>
+            <td>₹223.33</td>
+            <td>-26.8%</td>
+            <td>38.18</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>PFC</strong></td>
+            <td>₹345.45</td>
+            <td>-26.8%</td>
+            <td>49.58</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BSE</strong></td>
+            <td>₹3212.9</td>
+            <td>-26.8%</td>
+            <td>48.24</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JIOFIN</strong></td>
+            <td>₹230.05</td>
+            <td>-26.8%</td>
             <td>37.67</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ICICIGI</strong></td>
+            <td>₹1493.8</td>
+            <td>-26.6%</td>
+            <td>36.08</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IFCI</strong></td>
+            <td>₹75.23</td>
+            <td>-26.6%</td>
+            <td>38.3</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BAJAJHFL</strong></td>
+            <td>₹83.16</td>
+            <td>-26.6%</td>
+            <td>51.47</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>ADANIENT</strong></td>
-            <td>₹2995.6</td>
-            <td>-6.7%</td>
-            <td>61.97</td>
+            <td><strong>OLECTRA</strong></td>
+            <td>₹1225.1</td>
+            <td>-26.6%</td>
+            <td>43.55</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SOBHA</strong></td>
+            <td>₹1245.7</td>
+            <td>-26.5%</td>
+            <td>50.18</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>JSWSTEEL</strong></td>
-            <td>₹1271.0</td>
-            <td>-5.2%</td>
-            <td>39.31</td>
+            <td><strong>CLEAN</strong></td>
+            <td>₹835.0</td>
+            <td>-26.4%</td>
+            <td>53.17</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>ETERNAL</strong></td>
-            <td>₹337.0</td>
-            <td>-4.9%</td>
-            <td>61.1</td>
+            <td><strong>GODREJPROP</strong></td>
+            <td>₹1699.1</td>
+            <td>-26.4%</td>
+            <td>19.0</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>PFIZER</strong></td>
+            <td>₹4009.7</td>
+            <td>-26.3%</td>
+            <td>3.38</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AFFLE</strong></td>
+            <td>₹1587.4</td>
+            <td>-26.1%</td>
+            <td>53.29</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>ADANIPORTS</strong></td>
-            <td>₹1795.5</td>
-            <td>-4.7%</td>
-            <td>70.94</td>
+            <td><strong>SONATSOFTW</strong></td>
+            <td>₹283.8</td>
+            <td>-25.9%</td>
+            <td>46.74</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>TITAN</strong></td>
-            <td>₹4946.0</td>
-            <td>-4.3%</td>
-            <td>41.61</td>
+            <td><strong>BANKBARODA</strong></td>
+            <td>₹233.17</td>
+            <td>-25.8%</td>
+            <td>42.3</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BAYERCROP</strong></td>
+            <td>₹3760.0</td>
+            <td>-25.8%</td>
+            <td>16.57</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>DALBHARAT</strong></td>
+            <td>₹1758.1</td>
+            <td>-25.7%</td>
+            <td>41.62</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CESC</strong></td>
+            <td>₹142.8</td>
+            <td>-25.5%</td>
+            <td>43.81</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SHREECEM</strong></td>
+            <td>₹22235.0</td>
+            <td>-25.5%</td>
+            <td>33.06</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IEX</strong></td>
+            <td>₹112.29</td>
+            <td>-25.4%</td>
+            <td>29.95</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IOC</strong></td>
+            <td>₹137.06</td>
+            <td>-25.3%</td>
+            <td>51.67</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
         <tr>
-            <td><strong>APOLLOHOSP</strong></td>
-            <td>₹8909.0</td>
-            <td>-1.4%</td>
-            <td>57.89</td>
+            <td><strong>MAZDOCK</strong></td>
+            <td>₹2206.8</td>
+            <td>-25.3%</td>
+            <td>20.69</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>DCMSHRIRAM</strong></td>
+            <td>₹984.4</td>
+            <td>-25.3%</td>
+            <td>24.78</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JKCEMENT</strong></td>
+            <td>₹5104.0</td>
+            <td>-25.3%</td>
+            <td>51.32</td>
             <td><span class="badge badge-secondary">WATCH</span></td>
         </tr>
         
-                    </tbody>
+        <tr>
+            <td><strong>DABUR</strong></td>
+            <td>₹387.45</td>
+            <td>-25.3%</td>
+            <td>53.17</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GMDCLTD</strong></td>
+            <td>₹558.4</td>
+            <td>-25.2%</td>
+            <td>47.99</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HDFCBANK</strong></td>
+            <td>₹743.3</td>
+            <td>-25.2%</td>
+            <td>63.02</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TRITURBINE</strong></td>
+            <td>₹552.85</td>
+            <td>-25.2%</td>
+            <td>41.74</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ERIS</strong></td>
+            <td>₹1268.2</td>
+            <td>-25.1%</td>
+            <td>42.2</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>FSL</strong></td>
+            <td>₹270.0</td>
+            <td>-24.9%</td>
+            <td>52.6</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NUVOCO</strong></td>
+            <td>₹338.45</td>
+            <td>-24.9%</td>
+            <td>58.44</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HINDPETRO</strong></td>
+            <td>₹356.45</td>
+            <td>-24.9%</td>
+            <td>43.46</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>APTUS</strong></td>
+            <td>₹241.34</td>
+            <td>-24.8%</td>
+            <td>31.84</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HCLTECH</strong></td>
+            <td>₹1264.5</td>
+            <td>-24.7%</td>
+            <td>30.52</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SAMMAANCAP</strong></td>
+            <td>₹143.06</td>
+            <td>-24.7%</td>
+            <td>43.31</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>J&KBANK</strong></td>
+            <td>₹145.35</td>
+            <td>-24.6%</td>
+            <td>44.66</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AAVAS</strong></td>
+            <td>₹1311.4</td>
+            <td>-24.5%</td>
+            <td>65.49</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SAPPHIRE</strong></td>
+            <td>₹236.63</td>
+            <td>-24.3%</td>
+            <td>52.85</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HINDUNILVR</strong></td>
+            <td>₹1941.0</td>
+            <td>-24.1%</td>
+            <td>36.85</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SUNTV</strong></td>
+            <td>₹491.1</td>
+            <td>-24.0%</td>
+            <td>60.56</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>APOLLOTYRE</strong></td>
+            <td>₹403.25</td>
+            <td>-23.9%</td>
+            <td>22.92</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SBFC</strong></td>
+            <td>₹90.33</td>
+            <td>-23.8%</td>
+            <td>24.93</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NAVA</strong></td>
+            <td>₹552.25</td>
+            <td>-23.7%</td>
+            <td>43.3</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GPIL</strong></td>
+            <td>₹233.04</td>
+            <td>-23.5%</td>
+            <td>37.5</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>EIHOTEL</strong></td>
+            <td>₹305.25</td>
+            <td>-23.2%</td>
+            <td>56.74</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TIINDIA</strong></td>
+            <td>₹2573.5</td>
+            <td>-23.1%</td>
+            <td>28.91</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BERGEPAINT</strong></td>
+            <td>₹451.05</td>
+            <td>-23.0%</td>
+            <td>21.41</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BLUESTARCO</strong></td>
+            <td>₹1547.9</td>
+            <td>-22.9%</td>
+            <td>56.75</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ASHOKLEY</strong></td>
+            <td>₹160.73</td>
+            <td>-22.9%</td>
+            <td>32.31</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MRF</strong></td>
+            <td>₹125050.0</td>
+            <td>-22.8%</td>
+            <td>12.2</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>HYUNDAI</strong></td>
+            <td>₹2106.8</td>
+            <td>-22.8%</td>
+            <td>40.68</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>KFINTECH</strong></td>
+            <td>₹894.5</td>
+            <td>-22.8%</td>
+            <td>34.97</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RHIM</strong></td>
+            <td>₹377.5</td>
+            <td>-22.8%</td>
+            <td>62.59</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TRIDENT</strong></td>
+            <td>₹23.04</td>
+            <td>-22.5%</td>
+            <td>19.78</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ATGL</strong></td>
+            <td>₹627.5</td>
+            <td>-22.4%</td>
+            <td>54.15</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AIAENG</strong></td>
+            <td>₹3926.5</td>
+            <td>-22.4%</td>
+            <td>33.67</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ECLERX</strong></td>
+            <td>₹1920.4</td>
+            <td>-22.3%</td>
+            <td>42.78</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GRSE</strong></td>
+            <td>₹2395.5</td>
+            <td>-22.3%</td>
+            <td>35.81</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>KEI</strong></td>
+            <td>₹4568.0</td>
+            <td>-22.2%</td>
+            <td>22.02</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GODREJIND</strong></td>
+            <td>₹1105.6</td>
+            <td>-22.0%</td>
+            <td>36.15</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JUBLFOOD</strong></td>
+            <td>₹492.0</td>
+            <td>-21.7%</td>
+            <td>55.09</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>DOMS</strong></td>
+            <td>₹2092.7</td>
+            <td>-21.6%</td>
+            <td>17.85</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SUMICHEM</strong></td>
+            <td>₹455.3</td>
+            <td>-21.6%</td>
+            <td>11.6</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RELIANCE</strong></td>
+            <td>₹1242.2</td>
+            <td>-21.6%</td>
+            <td>29.48</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>PINELABS</strong></td>
+            <td>₹196.9</td>
+            <td>-21.5%</td>
+            <td>70.2</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>JSWCEMENT</strong></td>
+            <td>₹116.92</td>
+            <td>-21.5%</td>
+            <td>15.08</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ONGC</strong></td>
+            <td>₹235.7</td>
+            <td>-21.5%</td>
+            <td>50.45</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BRIGADE</strong></td>
+            <td>₹611.35</td>
+            <td>-21.5%</td>
+            <td>42.5</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IOB</strong></td>
+            <td>₹31.96</td>
+            <td>-21.4%</td>
+            <td>46.06</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CENTRALBK</strong></td>
+            <td>₹31.29</td>
+            <td>-21.4%</td>
+            <td>63.17</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>TATACONSUM</strong></td>
+            <td>₹990.6</td>
+            <td>-21.4%</td>
+            <td>33.31</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MMTC</strong></td>
+            <td>₹59.8</td>
+            <td>-21.3%</td>
+            <td>33.33</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ARE&M</strong></td>
+            <td>₹793.25</td>
+            <td>-21.0%</td>
+            <td>8.0</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>IRB</strong></td>
+            <td>₹17.97</td>
+            <td>-20.9%</td>
+            <td>32.92</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CEATLTD</strong></td>
+            <td>₹3367.1</td>
+            <td>-20.9%</td>
+            <td>46.41</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MPHASIS</strong></td>
+            <td>₹2275.5</td>
+            <td>-20.9%</td>
+            <td>21.9</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>CHAMBLFERT</strong></td>
+            <td>₹417.45</td>
+            <td>-20.8%</td>
+            <td>57.5</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>VBL</strong></td>
+            <td>₹431.1</td>
+            <td>-20.7%</td>
+            <td>71.56</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NTPCGREEN</strong></td>
+            <td>₹94.24</td>
+            <td>-20.7%</td>
+            <td>67.0</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>AMBER</strong></td>
+            <td>₹7025.0</td>
+            <td>-20.6%</td>
+            <td>28.83</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>MRPL</strong></td>
+            <td>₹164.62</td>
+            <td>-20.4%</td>
+            <td>41.94</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>FIVESTAR</strong></td>
+            <td>₹523.15</td>
+            <td>-20.4%</td>
+            <td>44.22</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>GVT&D</strong></td>
+            <td>₹4396.7</td>
+            <td>-20.3%</td>
+            <td>52.66</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>NATIONALUM</strong></td>
+            <td>₹349.3</td>
+            <td>-20.3%</td>
+            <td>32.59</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>RITES</strong></td>
+            <td>₹203.49</td>
+            <td>-20.3%</td>
+            <td>31.0</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>BPCL</strong></td>
+            <td>₹309.55</td>
+            <td>-20.3%</td>
+            <td>41.31</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SUPREMEIND</strong></td>
+            <td>₹3450.1</td>
+            <td>-20.3%</td>
+            <td>41.94</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ASTRAL</strong></td>
+            <td>₹1390.4</td>
+            <td>-20.3%</td>
+            <td>26.2</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>FACT</strong></td>
+            <td>₹795.85</td>
+            <td>-20.2%</td>
+            <td>42.09</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>SRF</strong></td>
+            <td>₹2535.8</td>
+            <td>-20.2%</td>
+            <td>41.09</td>
+            <td><span class="badge badge-success">BUY CANDIDATE</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>PARADEEP</strong></td>
+            <td>₹155.36</td>
+            <td>-20.1%</td>
+            <td>49.09</td>
+            <td><span class="badge badge-secondary">WATCH</span></td>
+        </tr>
+        </tbody>
                 </table>
             </div>
         </div>

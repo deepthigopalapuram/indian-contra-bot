@@ -3,7 +3,7 @@ name: Daily Indian Stock Contra Screener
 on:
   schedule:
     - cron: '0 12 * * *'  # Runs daily at 12:00 UTC (5:30 PM IST)
-  workflow_dispatch:      # Allows manual trigger via GitHub Actions tab
+  workflow_dispatch:      # Allows manual run via Actions tab
 
 permissions:
   contents: write
@@ -13,6 +13,7 @@ permissions:
 jobs:
   run-screener:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Repository
